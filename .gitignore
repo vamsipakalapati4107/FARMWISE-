@@ -10,3 +10,6 @@ data/processed/*
 data/app.db
 
 models/*.pkl
+.env
+venv/
+__pycache__/
