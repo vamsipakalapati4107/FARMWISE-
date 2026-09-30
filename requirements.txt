@@ -1,0 +1,17 @@
+pandas
+requests
+netCDF4
+matplotlib
+scikit-learn
+joblib
+tabulate
+fastapi
+uvicorn[standard]
+pytest
+sqlalchemy
+bcrypt
+python-jose[cryptography]
+python-multipart
+pydantic-settings
+httpx
+email-validator

@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sathupally Panchayat Weather Dashboard</title>
+<style>
+  :root {
+    --red: #d9463c;
+    --yellow: #d9a63c;
+    --green: #3c9a5f;
+    --border: #dde1e6;
+    --text: #1f2530;
+    --muted: #667085;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    padding: 24px;
+    color: var(--text);
+    background: #f7f8fa;
+  }
+  h1 { font-size: 1.4rem; margin-bottom: 4px; }
+  .subtitle { color: var(--muted); margin-top: 0; margin-bottom: 20px; }
+  #status { color: var(--muted); margin-bottom: 12px; font-size: 0.9rem; }
+  #status.error { color: var(--red); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.92rem;
+  }
+  th { background: #eef0f3; color: var(--muted); font-weight: 600; }
+
+  tr.gp-row { cursor: pointer; }
+  tr.gp-row:hover { background: #f0f3f7; }
+
+  .badge {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+  .badge-red { background: var(--red); }
+  .badge-yellow { background: var(--yellow); }
+  .badge-green { background: var(--green); }
+
+  tr.detail-row td { padding: 0; background: #fbfbfc; }
+  table.detail-table {
+    box-shadow: none;
+    border-radius: 0;
+    margin: 8px 14px 14px;
+    width: calc(100% - 28px);
+  }
+  table.detail-table th, table.detail-table td {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
+
+  footer {
+    margin-top: 24px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+  <h1>Sathupally Block &rarr; Panchayat Weather Dashboard</h1>
+  <p class="subtitle">Live 5-day forecast and agro-advisory, downscaled from the Sathupally block forecast to each Gram Panchayat.</p>
+  <p id="status">Loading forecast...</p>
+
+  <table id="forecast-table">
+    <thead>
+      <tr>
+        <th>Gram Panchayat</th>
+        <th>Rainfall</th>
+        <th>Temp (max)</th>
+        <th>RH (max)</th>
+        <th>Wind (max)</th>
+        <th>Advisory</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <footer>
+    Panchayat-level values are estimated via statistical downscaling from block-level forecasts and
+    a reanalysis-based proxy dataset, not physical station observations.
+  </footer>
+
+<script>
+  // Adjust if the API is running on a different host/port.
+  const API_BASE = "http://localhost:8000";
+
+  function fmt(value, digits = 1) {
+    return value === null || value === undefined || Number.isNaN(Number(value))
+      ? "—"
+      : Number(value).toFixed(digits);
+  }
+
+  function badgeClass(advisory) {
+    if (!advisory) return "badge-green";
+    if (advisory.startsWith("Heavy rain")) return "badge-red";
+    if (advisory.startsWith("No significant")) return "badge-green";
+    return "badge-yellow"; // heat stress, humidity + fungal risk
+  }
+
+  async function loadForecast() {
+    const res = await fetch(`${API_BASE}/forecast`);
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    return res.json();
+  }
+
+  function groupByGP(rows) {
+    const grouped = {};
+    for (const row of rows) {
+      (grouped[row.gram_panchayat] ??= []).push(row);
+    }
+    for (const gp in grouped) {
+      grouped[gp].sort((a, b) => a.date.localeCompare(b.date));
+    }
+    return grouped;
+  }
+
+  function buildDetailTable(days) {
+    const rows = days.map((d) => `
+      <tr>
+        <td>${d.date}</td>
+        <td>${fmt(d.rainfall_mm)} mm</td>
+        <td>${fmt(d.temp_max_c)} / ${fmt(d.temp_min_c)} &deg;C</td>
+        <td>${fmt(d.rh_max_pct)} %</td>
+        <td>${fmt(d.wind_max_kmh)} km/h</td>
+        <td>${d.confidence ?? "—"}</td>
+        <td>${d.advisory ?? "—"}</td>
+      </tr>
+    `).join("");
+
+    return `
+      <table class="detail-table">
+        <thead>
+          <tr>
+            <th>Date</th><th>Rainfall</th><th>Temp (max/min)</th>
+            <th>RH max</th><th>Wind</th><th>Confidence</th><th>Advisory</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+  }
+
+  function render(grouped) {
+    const tbody = document.querySelector("#forecast-table tbody");
+    tbody.innerHTML = "";
+
+    for (const gp of Object.keys(grouped).sort()) {
+      const days = grouped[gp];
+      const today = days[0];
+
+      const row = document.createElement("tr");
+      row.className = "gp-row";
+      row.innerHTML = `
+        <td>${gp}</td>
+        <td>${fmt(today.rainfall_mm)} mm</td>
+        <td>${fmt(today.temp_max_c)} &deg;C</td>
+        <td>${fmt(today.rh_max_pct)} %</td>
+        <td>${fmt(today.wind_max_kmh)} km/h</td>
+        <td>${today.advisory ?? "—"}</td>
+        <td><span class="badge ${badgeClass(today.advisory)}"></span></td>
+      `;
+
+      const detailRow = document.createElement("tr");
+      detailRow.className = "detail-row";
+      detailRow.style.display = "none";
+      const detailCell = document.createElement("td");
+      detailCell.colSpan = 7;
+      detailCell.innerHTML = buildDetailTable(days);
+      detailRow.appendChild(detailCell);
+
+      row.addEventListener("click", () => {
+        detailRow.style.display = detailRow.style.display === "none" ? "table-row" : "none";
+      });
+
+      tbody.appendChild(row);
+      tbody.appendChild(detailRow);
+    }
+  }
+
+  async function init() {
+    const statusEl = document.querySelector("#status");
+    try {
+      const data = await loadForecast();
+      const grouped = groupByGP(data);
+      render(grouped);
+      statusEl.textContent =
+        `Loaded ${data.length} forecast rows across ${Object.keys(grouped).length} Gram Panchayats. ` +
+        `Click a row to see the full 5-day forecast.`;
+    } catch (err) {
+      statusEl.textContent = `Failed to load forecast: ${err.message}. Is the API running at ${API_BASE}?`;
+      statusEl.classList.add("error");
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>

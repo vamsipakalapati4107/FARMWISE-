@@ -1,0 +1,63 @@
+{
+  "nav": {
+    "home": "Home",
+    "forecast": "Forecast",
+    "advisory": "Advisory",
+    "farm": "Farm",
+    "profile": "Profile"
+  },
+  "auth": {
+    "login": "Log in",
+    "register": "Create account",
+    "logout": "Log out",
+    "forgotPassword": "Forgot password?",
+    "resetPassword": "Reset password",
+    "name": "Name",
+    "email": "Email",
+    "mobile": "Mobile number",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "rememberMe": "Remember me"
+  },
+  "weather": {
+    "current": "Current weather",
+    "forecast5day": "5-Day Forecast",
+    "hourlyEstimated": "Hourly (estimated)",
+    "estimatedNotice": "Estimated from the day's forecast range, not sensor data",
+    "temperature": "Temperature",
+    "humidity": "Humidity",
+    "wind": "Wind",
+    "rainfall": "Rainfall",
+    "confidence": "Confidence"
+  },
+  "advisory_severity": {
+    "critical": "Critical",
+    "warning": "Warning",
+    "safe": "Normal"
+  },
+  "farm": {
+    "myFarm": "My Farm",
+    "addFarm": "Add Farm",
+    "addCrop": "Add Crop",
+    "area": "Area",
+    "irrigation": "Irrigation",
+    "soilType": "Soil type"
+  },
+  "location": {
+    "state": "State",
+    "district": "District",
+    "block": "Block / Mandal",
+    "panchayat": "Gram Panchayat",
+    "village": "Village",
+    "useCurrentLocation": "Use current location"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong.",
+    "retry": "Try again",
+    "empty": "Nothing here yet.",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  }
+}

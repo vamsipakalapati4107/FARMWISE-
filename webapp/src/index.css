@@ -1,0 +1,123 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "@fontsource-variable/inter";
+@import "@fontsource/cormorant-garamond/300.css";
+@import "@fontsource/cormorant-garamond/500.css";
+@import "@fontsource/cormorant-garamond/600.css";
+
+/* No dark-mode variant: farmer-facing outdoor daytime use case, see DESIGN.md */
+
+@theme inline {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Cormorant Garamond', ui-serif, Georgia, serif;
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+
+  /* Arva palette, exposed as Tailwind utilities: bg-forest, text-bone, etc. */
+  --color-forest-ink: #07503f;
+  --color-vivid-lime: #e8fe85;
+  --color-bone: #f1efdf;
+  --color-ash-gray: #efefef;
+  --color-charcoal: #212529;
+  --color-graphite: #353535;
+  --color-pewter: #6d6d6d;
+  --color-sky-card: #b2cee7;
+  --color-peach-card: #fceace;
+  --color-sage-card: #e6ecd5;
+  --color-moss: #c3cda7;
+
+  --color-status-critical: #b3532f;
+  --color-status-critical-bg: #f3e2d8;
+  --color-status-warning: #c9922b;
+  --color-status-warning-bg: #f5ecd8;
+  --color-status-safe: #4a7a5e;
+  --color-status-safe-bg: #e6ecd5;
+  --color-status-info: #3d6b8c;
+  --color-status-info-bg: #b2cee7;
+
+  --radius-card: 20px;
+  --radius-input: 33px;
+  --radius-button: 100px;
+  --radius-nav-pill: 110px;
+  --radius-hero-card: 30px;
+
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: var(--radius);
+  --radius-xl: var(--radius); /* Card uses rounded-xl; keep it at the DESIGN.md 20px card radius */
+  --radius-2xl: 30px; /* hero-card radius */
+}
+
+:root {
+  --background: #f1efdf; /* bone canvas, never pure white -- see DESIGN.md */
+  --foreground: #212529;
+  --card: #ffffff;
+  --card-foreground: #212529;
+  --popover: #ffffff;
+  --popover-foreground: #212529;
+  --primary: #07503f;
+  --primary-foreground: #ffffff;
+  --secondary: #efefef;
+  --secondary-foreground: #212529;
+  --muted: #efefef;
+  --muted-foreground: #6d6d6d;
+  --accent: #e6ecd5;
+  --accent-foreground: #212529;
+  --destructive: #b3532f;
+  --border: #c3cda7;
+  --input: #c3cda7;
+  --ring: #07503f;
+  --radius: 20px;
+  --sidebar: #07503f;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #ffffff;
+  --sidebar-primary-foreground: #07503f;
+  --sidebar-accent: #0a6650;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #0a6650;
+  --sidebar-ring: #e8fe85;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+  h1, h2, h3, h4 {
+    @apply font-serif;
+    letter-spacing: -0.012em;
+  }
+  p {
+    max-width: 60ch;
+  }
+}
